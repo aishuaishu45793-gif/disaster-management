@@ -135,7 +135,8 @@
       }
       .theme-btn,
       .siren-btn,
-      .mute-btn {
+      .mute-btn,
+      .panic-btn-top {
         background: rgba(255, 255, 255, 0.12);
         border: 1px solid rgba(255, 255, 255, 0.3);
         color: #fff;
@@ -146,13 +147,22 @@
       }
       .theme-btn:hover,
       .siren-btn:hover,
-      .mute-btn:hover {
+      .mute-btn:hover,
+      .panic-btn-top:hover {
         background: rgba(255, 255, 255, 0.22);
+      }
+      .panic-btn-top {
+        background: var(--crit);
+        border-color: var(--crit);
+        font-weight: 800;
       }
       .siren-btn.live {
         background: var(--bad);
         border-color: var(--bad);
         animation: pulseBtn 1s infinite;
+      }
+      .siren-btn.armed {
+        opacity: 0.65;
       }
       @keyframes pulseBtn {
         0%,
@@ -200,6 +210,12 @@
         color: #fff;
         box-shadow: var(--shadow);
       }
+      .tab-sep {
+        width: 1px;
+        background: var(--border);
+        margin: 4px 4px;
+        flex: 0 0 auto;
+      }
 
       .wrap {
         max-width: 1400px;
@@ -235,6 +251,72 @@
         color: var(--muted);
         font-size: 13.5px;
         margin: 0 0 18px;
+      }
+
+      .stage-strip {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      @media (max-width: 800px) {
+        .stage-strip {
+          grid-template-columns: 1fr;
+        }
+      }
+      .stage-card {
+        border-radius: var(--radius);
+        padding: 14px 16px;
+        color: #fff;
+        cursor: default;
+        box-shadow: var(--shadow);
+      }
+      .stage-card.before {
+        background: linear-gradient(135deg, #0f766e, #0ea5e9);
+      }
+      .stage-card.during {
+        background: linear-gradient(135deg, #b91c1c, #ea580c);
+      }
+      .stage-card.after {
+        background: linear-gradient(135deg, #4338ca, #7c3aed);
+      }
+      .stage-card b {
+        display: block;
+        font-size: 13px;
+        opacity: 0.85;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-bottom: 4px;
+      }
+      .stage-card .h {
+        font-size: 15.5px;
+        font-weight: 800;
+        margin-bottom: 6px;
+      }
+      .stage-card .links {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+      .stage-card .links button {
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        color: #fff;
+        border-radius: 20px;
+        padding: 4px 10px;
+        font-size: 11.5px;
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .stage-card .links button:hover {
+        background: rgba(255, 255, 255, 0.32);
+      }
+      .stage-card p {
+        margin: 0;
+        font-size: 12.5px;
+        opacity: 0.95;
+        line-height: 1.4;
       }
 
       .grid {
@@ -276,6 +358,7 @@
         border-radius: var(--radius);
         padding: 16px;
         box-shadow: var(--shadow);
+        position: relative;
       }
       .card h3 {
         margin: 0 0 12px;
@@ -319,6 +402,9 @@
       }
       .stat-card.b-green {
         border-left: 4px solid var(--good);
+      }
+      .stat-card.b-pink {
+        border-left: 4px solid #db2777;
       }
 
       .badge {
@@ -395,6 +481,9 @@
       }
       .btn.bad {
         background: var(--bad);
+      }
+      .btn.pink {
+        background: #db2777;
       }
       .btn.block {
         width: 100%;
@@ -573,10 +662,20 @@
         height: 420px;
         border-radius: 10px;
         border: 1px solid var(--border);
+        position: relative;
         z-index: 1;
+        isolation: isolate;
       }
       .leaflet-map.small {
         height: 260px;
+      }
+      /* keep leaflet's own top-left/top-right controls from ever floating above the sticky topbar/tabs */
+      .leaflet-top,
+      .leaflet-bottom {
+        z-index: 350 !important;
+      }
+      .leaflet-pane {
+        z-index: 2 !important;
       }
       .legend {
         display: flex;
@@ -716,6 +815,56 @@
       .critical-banner.show {
         display: block;
       }
+      .safe-banner {
+        background: rgba(22, 163, 74, 0.12);
+        border: 1px solid var(--good);
+        color: var(--good);
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-size: 12.5px;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+      .route-summary {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin: 12px 0;
+      }
+      @media (max-width: 700px) {
+        .route-summary {
+          grid-template-columns: 1fr;
+        }
+      }
+      .route-summary .rs {
+        background: var(--panel-2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+      }
+      .route-summary .rs b {
+        display: block;
+        font-size: 17px;
+      }
+      .route-summary .rs span {
+        font-size: 11.5px;
+        color: var(--muted);
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .helpline-table td:first-child {
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .helpline-table a {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 800;
+      }
+      .country-flag {
+        font-size: 15px;
+        margin-right: 4px;
+      }
       thumb-img {
         width: 36px;
         height: 36px;
@@ -733,8 +882,11 @@
         </div>
       </div>
       <div class="spacer"></div>
+      <button class="panic-btn-top" id="panicBtnTop" type="button">
+        🆘 PANIC
+      </button>
       <button class="siren-btn" id="sirenBtn" type="button">
-        🔇 Siren Off
+        🔇 Siren: Standby
       </button>
       <div class="clock" id="clockBox">—</div>
       <button class="theme-btn" id="themeToggle" type="button">🌓 Theme</button>
@@ -786,7 +938,11 @@
       tickClock();
       setInterval(tickClock, 1000);
 
-      /* ---------------------------- SIREN (Web Audio, no external files) ---------------------------- */
+      /* ---------------------------- SIREN (Web Audio, no external files) ----------------------------
+   IMPORTANT: the siren NEVER plays on load or "just because". It only ever starts when a
+   real disaster-severity event fires (a CRITICAL risk assessment, a CRITICAL/HIGH manual
+   alert, a CRITICAL SOS, or the panic button), and it auto-silences itself the moment no
+   CRITICAL condition remains anywhere in the platform (see checkSirenAutoState()). */
       const Siren = (function () {
         let ctx = null,
           osc = null,
@@ -822,7 +978,9 @@
             lfo.start();
             playing = true;
             document.getElementById("sirenBtn").classList.add("live");
-            document.getElementById("sirenBtn").innerHTML = "🔊 Stop Siren";
+            document.getElementById("sirenBtn").classList.remove("armed");
+            document.getElementById("sirenBtn").innerHTML =
+              "🔊 Siren: LIVE — Stop";
           } catch (e) {
             console.warn("Siren unavailable", e);
           }
@@ -835,7 +993,8 @@
           } catch (e) {}
           playing = false;
           document.getElementById("sirenBtn").classList.remove("live");
-          document.getElementById("sirenBtn").innerHTML = "🔇 Siren Off";
+          document.getElementById("sirenBtn").classList.add("armed");
+          document.getElementById("sirenBtn").innerHTML = "🔇 Siren: Standby";
         }
         function toggle() {
           playing ? stop() : start();
@@ -845,6 +1004,22 @@
       document
         .getElementById("sirenBtn")
         .addEventListener("click", Siren.toggle);
+
+      /* Re-evaluates whether ANY real critical condition still exists. If not, silence the
+   siren automatically — the platform should be quiet by default and only loud during an
+   actual, ongoing emergency. Call this after every state mutation. */
+      function checkSirenAutoState() {
+        const criticalAlert = STATE.alerts.some((a) => a.level === "CRITICAL");
+        const criticalZone = STATE.zones.some(
+          (z) => z.riskLevel === "CRITICAL",
+        );
+        const criticalSos = STATE.sos.some(
+          (s) => s.status !== "rescued" && s.priority === "CRITICAL",
+        );
+        const stillCritical = criticalAlert || criticalZone || criticalSos;
+        if (stillCritical) Siren.start();
+        else Siren.stop();
+      }
 
       /* ---------------------------- GEO HELPERS ---------------------------- */
       function haversineKm(lat1, lon1, lat2, lon2) {
@@ -870,6 +1045,207 @@
         });
         return best ? { ...best, distanceKm: bestD } : null;
       }
+
+      /* ---------------------------- REAL-WORLD LOCATION DATABASE ----------------------------
+   Real cities across India, Pakistan and Japan with real coordinates, for the
+   From → To Location Router (exact distance + real road route between any two
+   of them) and for grounding hazard zones in real geography rather than
+   invented placeholders. */
+      const LOCATIONS = [
+        // India
+        {
+          id: "IN-BLR",
+          name: "Bengaluru",
+          country: "India",
+          flag: "🇮🇳",
+          lat: 12.9716,
+          lng: 77.5946,
+        },
+        {
+          id: "IN-DEL",
+          name: "New Delhi",
+          country: "India",
+          flag: "🇮🇳",
+          lat: 28.6139,
+          lng: 77.209,
+        },
+        {
+          id: "IN-MUM",
+          name: "Mumbai",
+          country: "India",
+          flag: "🇮🇳",
+          lat: 19.076,
+          lng: 72.8777,
+        },
+        {
+          id: "IN-CHE",
+          name: "Chennai",
+          country: "India",
+          flag: "🇮🇳",
+          lat: 13.0827,
+          lng: 80.2707,
+        },
+        {
+          id: "IN-KOL",
+          name: "Kolkata",
+          country: "India",
+          flag: "🇮🇳",
+          lat: 22.5726,
+          lng: 88.3639,
+        },
+        {
+          id: "IN-HYD",
+          name: "Hyderabad",
+          country: "India",
+          flag: "🇮🇳",
+          lat: 17.385,
+          lng: 78.4867,
+        },
+        {
+          id: "IN-GUW",
+          name: "Guwahati",
+          country: "India",
+          flag: "🇮🇳",
+          lat: 26.1445,
+          lng: 91.7362,
+        },
+        {
+          id: "IN-PUR",
+          name: "Puri (cyclone coast)",
+          country: "India",
+          flag: "🇮🇳",
+          lat: 19.8135,
+          lng: 85.8312,
+        },
+        // Pakistan
+        {
+          id: "PK-KHI",
+          name: "Karachi",
+          country: "Pakistan",
+          flag: "🇵🇰",
+          lat: 24.8607,
+          lng: 67.0011,
+        },
+        {
+          id: "PK-LHE",
+          name: "Lahore",
+          country: "Pakistan",
+          flag: "🇵🇰",
+          lat: 31.5497,
+          lng: 74.3436,
+        },
+        {
+          id: "PK-ISB",
+          name: "Islamabad",
+          country: "Pakistan",
+          flag: "🇵🇰",
+          lat: 33.6844,
+          lng: 73.0479,
+        },
+        {
+          id: "PK-PEW",
+          name: "Peshawar",
+          country: "Pakistan",
+          flag: "🇵🇰",
+          lat: 34.0151,
+          lng: 71.5249,
+        },
+        {
+          id: "PK-MUZ",
+          name: "Muzaffarabad (seismic zone)",
+          country: "Pakistan",
+          flag: "🇵🇰",
+          lat: 34.37,
+          lng: 73.4711,
+        },
+        {
+          id: "PK-SUK",
+          name: "Sukkur (flood-prone)",
+          country: "Pakistan",
+          flag: "🇵🇰",
+          lat: 27.7052,
+          lng: 68.8574,
+        },
+        // Japan
+        {
+          id: "JP-TYO",
+          name: "Tokyo",
+          country: "Japan",
+          flag: "🇯🇵",
+          lat: 35.6762,
+          lng: 139.6503,
+        },
+        {
+          id: "JP-OSA",
+          name: "Osaka",
+          country: "Japan",
+          flag: "🇯🇵",
+          lat: 34.6937,
+          lng: 135.5023,
+        },
+        {
+          id: "JP-KYO",
+          name: "Kyoto",
+          country: "Japan",
+          flag: "🇯🇵",
+          lat: 35.0116,
+          lng: 135.7681,
+        },
+        {
+          id: "JP-SEN",
+          name: "Sendai (2011 tsunami coast)",
+          country: "Japan",
+          flag: "🇯🇵",
+          lat: 38.2682,
+          lng: 140.8694,
+        },
+        {
+          id: "JP-FUK",
+          name: "Fukuoka",
+          country: "Japan",
+          flag: "🇯🇵",
+          lat: 33.5904,
+          lng: 130.4017,
+        },
+        {
+          id: "JP-SAP",
+          name: "Sapporo",
+          country: "Japan",
+          flag: "🇯🇵",
+          lat: 43.0618,
+          lng: 141.3545,
+        },
+      ];
+      function locById(id) {
+        return LOCATIONS.find((l) => l.id === id);
+      }
+
+      /* Real, publicly published national emergency numbers — used only for display in the
+   Preparedness and Women & Child Safety panels. */
+      const HELPLINES = {
+        India: [
+          ["National Emergency (Police/Fire/Ambulance)", "112"],
+          ["Women Helpline", "1091"],
+          ["Women Helpline (Domestic Abuse)", "181"],
+          ["Child Helpline", "1098"],
+          ["Disaster Management (NDMA)", "1078"],
+          ["Ambulance", "108"],
+        ],
+        Pakistan: [
+          ["Police", "15"],
+          ["Rescue / Ambulance (Edhi & 1122)", "1122"],
+          ["Women Helpline (Madadgaar)", "1043"],
+          ["Child Protection Helpline", "1121"],
+          ["National Disaster Mgmt Authority", "051-9205037"],
+        ],
+        Japan: [
+          ["Police", "110"],
+          ["Fire / Ambulance", "119"],
+          ["Japan Coast Guard", "118"],
+          ["Child Consultation Centre", "189"],
+          ["Domestic Violence Hotline", "0570-0-55210"],
+        ],
+      };
 
       /* ---------------------------- STATE ---------------------------- */
       const ZONES = [
@@ -947,8 +1323,39 @@
       ];
 
       function defaultState() {
+        const zones = JSON.parse(JSON.stringify(ZONES));
+        // Seed each zone with a plausible, non-zero live risk reading so the dashboard,
+        // map and charts never open on an empty/all-zero state.
+        const seedInputs = {
+          A: {
+            hazard: "flood",
+            i: { rainfall: 96, waterLevel: 2.4, soilMoisture: 58 },
+          },
+          B: {
+            hazard: "landslide",
+            i: { rainfall: 140, soilMoisture: 66, slope: 27 },
+          },
+          C: { hazard: "rainfall", i: { rainfall: 88, duration: 14 } },
+          D: {
+            hazard: "urbanflood",
+            i: { rainfall: 62, drainage: 55, waterLevel: 0.4 },
+          },
+          E: {
+            hazard: "fire",
+            i: { temperature: 33, humidity: 34, windSpeed: 22 },
+          },
+          F: { hazard: "heatwave", i: { temperature: 38, humidity: 40 } },
+        };
+        zones.forEach((z) => {
+          const seed = seedInputs[z.id];
+          if (seed) {
+            const r = computeRisk(seed.hazard, seed.i);
+            z.riskScore = r.score;
+            z.riskLevel = r.level;
+          }
+        });
         return {
-          zones: JSON.parse(JSON.stringify(ZONES)),
+          zones,
           shelters: [
             {
               id: "SH-01",
@@ -959,6 +1366,7 @@
               capacity: 500,
               occupied: 120,
               medical: true,
+              womenChild: true,
             },
             {
               id: "SH-02",
@@ -969,6 +1377,7 @@
               capacity: 300,
               occupied: 40,
               medical: false,
+              womenChild: false,
             },
             {
               id: "SH-03",
@@ -979,6 +1388,7 @@
               capacity: 800,
               occupied: 610,
               medical: true,
+              womenChild: true,
             },
             {
               id: "SH-04",
@@ -989,6 +1399,7 @@
               capacity: 600,
               occupied: 180,
               medical: true,
+              womenChild: true,
             },
             {
               id: "SH-05",
@@ -999,6 +1410,7 @@
               capacity: 250,
               occupied: 0,
               medical: false,
+              womenChild: false,
             },
             {
               id: "SH-06",
@@ -1009,6 +1421,7 @@
               capacity: 400,
               occupied: 60,
               medical: false,
+              womenChild: true,
             },
           ],
           hospitals: [
@@ -1099,29 +1512,70 @@
               zoneId: "F",
             },
           ],
-          sos: [],
-          alerts: [],
+          sos: [
+            {
+              id: "SOS-1001",
+              name: "Demo Record (resolved)",
+              age: 41,
+              phone: "",
+              zoneId: "C",
+              people: 3,
+              types: ["Water"],
+              message: "Sample resolved case shown for reference.",
+              priority: "MEDIUM",
+              status: "rescued",
+              assignedTeam: null,
+              time: new Date(Date.now() - 3 * 3600 * 1000).toLocaleString(),
+              medicalAssist: false,
+              gps: null,
+              photo: null,
+              route: null,
+            },
+          ],
+          alerts: [
+            {
+              id: "AL-1000",
+              zoneId: "C",
+              level: "MEDIUM",
+              score: 46,
+              hazard: "Heavy Rainfall",
+              icon: "🌧️",
+              title:
+                "HEAVY RAINFALL ADVISORY — Zone C · Eastern Belt (Whitefield)",
+              message:
+                "AI risk score 46/100 (MEDIUM). Continued monitoring in effect; residents should stay updated on drainage conditions.",
+              time: new Date(Date.now() - 5 * 3600 * 1000).toLocaleString(),
+            },
+          ],
           inventory: { food: 2400, water: 3600, medicine: 900, blankets: 1500 },
           reliefLog: [],
           riskHistory: [],
           recovery: {
-            rescued: 0,
-            relocated: 0,
+            rescued: 3,
+            relocated: 3,
             buildingsDamaged: 126,
             roadsBlocked: 14,
             medicalCases: 62,
           },
-          sosCounter: 1000,
-          log: [],
+          sosCounter: 1001,
+          log: [
+            {
+              t: new Date(Date.now() - 5 * 3600 * 1000).toLocaleTimeString(),
+              text: "Platform initialised — baseline risk readings generated for all 6 zones.",
+            },
+          ],
+          trustedContact: { name: "", phone: "" },
         };
       }
 
       let STATE = null;
       function loadState() {
         try {
-          const raw = localStorage.getItem("rakshanetx_state_v2");
+          const raw = localStorage.getItem("rakshanetx_state_v3");
           if (raw) {
             STATE = JSON.parse(raw);
+            if (!STATE.trustedContact)
+              STATE.trustedContact = { name: "", phone: "" };
             return;
           }
         } catch (e) {}
@@ -1129,12 +1583,11 @@
       }
       function saveState() {
         try {
-          localStorage.setItem("rakshanetx_state_v2", JSON.stringify(STATE));
+          localStorage.setItem("rakshanetx_state_v3", JSON.stringify(STATE));
         } catch (e) {
           console.warn("save failed", e);
         }
       }
-      loadState();
 
       function resetDemo() {
         if (
@@ -1146,6 +1599,7 @@
         STATE = defaultState();
         saveState();
         renderAll();
+        checkSirenAutoState();
         toast("Demo data reset", "🔄");
       }
       function zoneById(id) {
@@ -1285,15 +1739,17 @@
       /* ---------------------------- TABS / VIEWS ---------------------------- */
       const VIEWS = [
         { id: "dashboard", label: "🖥️ Dashboard" },
-        { id: "risk", label: "🤖 Risk Engine" },
+        { id: "risk", label: "🤖 Risk Engine · Before" },
         { id: "map", label: "🗺️ Live GPS Map" },
-        { id: "alerts", label: "🚨 Early Warning" },
-        { id: "sos", label: "🆘 Citizen SOS" },
-        { id: "rescue", label: "🚑 Rescue Coord." },
+        { id: "router", label: "📍 Location Router" },
+        { id: "alerts", label: "🚨 Early Warning · During" },
+        { id: "sos", label: "🆘 Citizen SOS · During" },
+        { id: "rescue", label: "🚑 Rescue Coord. · During" },
         { id: "shelters", label: "🏠 Shelters" },
-        { id: "relief", label: "📦 Relief & Resources" },
+        { id: "safety", label: "👩‍👧 Women & Child Safety" },
+        { id: "relief", label: "📦 Relief · After" },
         { id: "evac", label: "🧭 Evacuation Planner" },
-        { id: "recovery", label: "📊 Recovery & Analytics" },
+        { id: "recovery", label: "📊 Recovery · After" },
         { id: "assistant", label: "💬 Disaster Assistant" },
       ];
       function buildTabs() {
@@ -1319,17 +1775,31 @@
         try {
           if (id === "dashboard") renderDashboard();
           if (id === "map") renderMap("map-main");
+          if (id === "router") renderRouter();
           if (id === "alerts") renderAlerts();
           if (id === "rescue") renderRescue();
           if (id === "shelters") renderShelters();
+          if (id === "safety") renderSafety();
           if (id === "relief") renderRelief();
           if (id === "recovery") renderRecovery();
           if (id === "evac") renderEvac();
         } catch (err) {
           console.error("showView render error", id, err);
         }
+        // Leaflet maps that render while their tab is hidden come out mis-sized/overlapping;
+        // invalidateSize() after the tab becomes visible fixes that reliably.
+        setTimeout(() => {
+          Object.values(MapRegistry).forEach((reg) => {
+            if (reg && reg.map) reg.map.invalidateSize();
+          });
+        }, 60);
         window.scrollTo({ top: 0, behavior: "instant" });
       }
+      window.addEventListener("resize", () => {
+        Object.values(MapRegistry).forEach((reg) => {
+          if (reg && reg.map) reg.map.invalidateSize();
+        });
+      });
       function el(html) {
         const d = document.createElement("div");
         d.innerHTML = html;
@@ -1341,16 +1811,18 @@
         host.appendChild(buildDashboardView());
         host.appendChild(buildRiskView());
         host.appendChild(buildMapView());
+        host.appendChild(buildRouterView());
         host.appendChild(buildAlertsView());
         host.appendChild(buildSosView());
         host.appendChild(buildRescueView());
         host.appendChild(buildSheltersView());
+        host.appendChild(buildSafetyView());
         host.appendChild(buildReliefView());
         host.appendChild(buildEvacView());
         host.appendChild(buildRecoveryView());
         host.appendChild(buildAssistantView());
         const foot = el(
-          `<div class="foot">RakshaNet-X prototype · SIH 2026 · Disaster Management (SIH26206) · Demo zone data mapped onto Bengaluru, India for prototype purposes &nbsp;•&nbsp; <a href="#" id="resetLink" style="color:var(--muted)">Reset demo data</a></div>`,
+          `<div class="foot">RakshaNet-X prototype · SIH 2026 · Disaster Management (SIH26206) · Zone-level demo data is mapped onto Bengaluru, India; the Location Router covers real cities across India, Pakistan and Japan &nbsp;•&nbsp; <a href="#" id="resetLink" style="color:var(--muted)">Reset demo data</a></div>`,
         );
         host.appendChild(foot);
         document.getElementById("resetLink").addEventListener("click", (e) => {
@@ -1361,14 +1833,14 @@
 
       /* ========================= LEAFLET MAP ENGINE ========================= */
       const MapRegistry = {}; // containerId -> { map, layer }
-      function getOrCreateMap(containerId) {
+      function getOrCreateMap(containerId, center, zoom) {
         if (MapRegistry[containerId] && MapRegistry[containerId].map)
           return MapRegistry[containerId];
         const container = document.getElementById(containerId);
         if (!container) return null;
         const map = L.map(containerId, { scrollWheelZoom: true }).setView(
-          [13.02, 77.62],
-          10.4,
+          center || [13.02, 77.62],
+          zoom || 10.4,
         );
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           maxZoom: 19,
@@ -1413,7 +1885,7 @@
             icon: divIcon("#0ea5e9", "🏠", false),
           }).addTo(reg.layer);
           m.bindPopup(
-            `<b>🏠 ${s.name}</b><br>${s.occupied}/${s.capacity} occupied${s.medical ? "<br>🏥 Medical support on site" : ""}`,
+            `<b>🏠 ${s.name}</b><br>${s.occupied}/${s.capacity} occupied${s.medical ? "<br>🏥 Medical support on site" : ""}${s.womenChild ? "<br>👩‍👧 Women & child friendly space" : ""}`,
           );
         });
         STATE.hospitals.forEach((h) => {
@@ -1497,7 +1969,7 @@
     <div class="small muted">Population: ${z.population.toLocaleString()} · Primary hazard: ${z.hazard} · Risk score: ${z.riskScore}/100</div>
     <div class="hr"></div>
     <b class="small">🏠 Shelters (${shelters.length})</b>
-    ${shelters.map((s) => `<div class="small">${s.name} — ${s.occupied}/${s.capacity} occupied</div>`).join("") || '<div class="small muted">None</div>'}
+    ${shelters.map((s) => `<div class="small">${s.name} — ${s.occupied}/${s.capacity} occupied${s.womenChild ? " · 👩‍👧" : ""}</div>`).join("") || '<div class="small muted">None</div>'}
     <div class="hr"></div>
     <b class="small">🏥 Hospitals (${hospitals.length})</b>
     ${hospitals.map((h) => `<div class="small">${h.name}</div>`).join("") || '<div class="small muted">None</div>'}
@@ -1517,6 +1989,23 @@
     <h1 class="page-title">🖥️ Disaster Control Dashboard</h1>
     <p class="page-sub">Live command-center overview — updates instantly as SOS requests, risk assessments and relief actions happen anywhere in the platform.</p>
     <div class="critical-banner" id="criticalBanner"></div>
+    <div class="stage-strip">
+      <div class="stage-card before">
+        <b>Stage 1</b><div class="h">🔎 Before — Predict & Prepare</div>
+        <p>Multi-hazard risk scoring, preparedness checklists and hazard-zone mapping so a threat is spotted before it becomes a disaster.</p>
+        <div class="links"><button data-goto="risk" type="button">Risk Engine</button><button data-goto="map" type="button">Risk Map</button></div>
+      </div>
+      <div class="stage-card during">
+        <b>Stage 2</b><div class="h">🚨 During — Respond</div>
+        <p>Citizen SOS with live GPS, early-warning alerts + siren, safe evacuation routing and real-time rescue coordination.</p>
+        <div class="links"><button data-goto="sos" type="button">Send SOS</button><button data-goto="rescue" type="button">Rescue Coord.</button><button data-goto="alerts" type="button">Alerts</button></div>
+      </div>
+      <div class="stage-card after">
+        <b>Stage 3</b><div class="h">📈 After — Recover</div>
+        <p>Damage assessment, relief-resource dispatch tracking and recovery analytics once the immediate danger has passed.</p>
+        <div class="links"><button data-goto="relief" type="button">Relief</button><button data-goto="recovery" type="button">Recovery</button></div>
+      </div>
+    </div>
     <div class="grid g-4" id="dashStats"></div>
     <div class="hr"></div>
     <div class="two-col">
@@ -1536,6 +2025,10 @@
     <div class="hr"></div>
     <div class="card"><h3>🕓 Live Activity Feed</h3><div id="activityFeed" class="small"></div></div>
   `;
+        v.addEventListener("click", (e) => {
+          const b = e.target.closest("button[data-goto]");
+          if (b) showView(b.dataset.goto);
+        });
         return v;
       }
       let chartRiskTrend = null,
@@ -1546,10 +2039,22 @@
         const criticalSos = STATE.sos.filter(
           (s) => s.status !== "rescued" && s.priority === "CRITICAL",
         );
+        const criticalZones = STATE.zones.filter(
+          (z) => z.riskLevel === "CRITICAL",
+        );
         const banner = document.getElementById("criticalBanner");
-        if (criticalSos.length) {
+        if (criticalSos.length || criticalZones.length) {
           banner.classList.add("show");
-          banner.innerHTML = `🚨 ${criticalSos.length} CRITICAL case(s) in progress — ${criticalSos.map((s) => s.id + " (" + zoneById(s.zoneId).name + ")").join(", ")}. Route to nearest hospital is drawn on the map.`;
+          const parts = [];
+          if (criticalZones.length)
+            parts.push(
+              `${criticalZones.length} zone(s) at CRITICAL risk (${criticalZones.map((z) => z.name).join(", ")})`,
+            );
+          if (criticalSos.length)
+            parts.push(
+              `${criticalSos.length} CRITICAL SOS case(s) in progress (${criticalSos.map((s) => s.id).join(", ")})`,
+            );
+          banner.innerHTML = `🚨 DISASTER ACTIVE: ${parts.join(" · ")}. Siren is live — see the Rescue Coordination and Live GPS Map tabs.`;
         } else {
           banner.classList.remove("show");
           banner.innerHTML = "";
@@ -1586,11 +2091,15 @@
         chartRiskTrend = new Chart(ctx1, {
           type: "line",
           data: {
-            labels: hist.map((h) => h.t),
+            labels: hist.length
+              ? hist.map((h) => h.t)
+              : STATE.zones.map((z) => z.id),
             datasets: [
               {
                 label: "Risk Score",
-                data: hist.map((h) => h.score),
+                data: hist.length
+                  ? hist.map((h) => h.score)
+                  : STATE.zones.map((z) => z.riskScore),
                 borderColor: "#1d4ed8",
                 backgroundColor: "rgba(29,78,216,.15)",
                 tension: 0.3,
@@ -1684,11 +2193,11 @@
   </div>`;
       }
 
-      /* ========================= RISK ENGINE ========================= */
+      /* ========================= RISK ENGINE (BEFORE STAGE) ========================= */
       function buildRiskView() {
         const v = el(`<div class="view" id="view-risk"></div>`);
         v.innerHTML = `
-    <h1 class="page-title">🤖 Multi-Hazard AI Risk Assessment Engine</h1>
+    <h1 class="page-title">🤖 Multi-Hazard AI Risk Assessment Engine <span class="chip">BEFORE</span></h1>
     <p class="page-sub">Flood · Flash Flood · Landslide · Cyclone · Heavy Rainfall · Urban Flooding · Forest Fire · Extreme Heat. This is a transparent rule-based scoring model (a real deployment would train a classifier on historical sensor data) — select a hazard, enter live conditions, and run the assessment.</p>
     <div class="pill-row" id="hazardPills"></div>
     <div class="two-col">
@@ -1699,6 +2208,36 @@
         <button class="btn block" style="margin-top:14px" id="runRiskBtn" type="button">▶ Run Risk Analysis</button>
       </div>
       <div class="card"><h3>📤 Assessment Result</h3><div id="riskResult"><p class="muted small">Run an assessment to see the AI risk score, hazard classification and recommended actions.</p></div></div>
+    </div>
+    <div class="hr"></div>
+    <div class="card">
+      <h3>✅ Preparedness Checklist <span class="tag">real-world guidance</span></h3>
+      <div class="grid g-3">
+        <div>
+          <b class="small">Household kit</b>
+          <ul class="small">
+            <li>3 days of water (4L/person/day) and non-perishable food</li>
+            <li>Battery/hand-crank radio + power bank + torch</li>
+            <li>First-aid kit, essential medicines, copies of ID documents</li>
+          </ul>
+        </div>
+        <div>
+          <b class="small">Before a warning is issued</b>
+          <ul class="small">
+            <li>Know your zone's shelter and hospital (see Live GPS Map)</li>
+            <li>Agree a family meeting point and an out-of-area contact</li>
+            <li>Keep phones charged; save local emergency numbers (see Women & Child Safety tab)</li>
+          </ul>
+        </div>
+        <div>
+          <b class="small">Vulnerable members</b>
+          <ul class="small">
+            <li>Plan extra time/help for elderly, disabled, pregnant or very young family members</li>
+            <li>Keep child ID tags / info cards ready for evacuation</li>
+            <li>Identify the nearest women-and-child-friendly shelter in advance</li>
+          </ul>
+        </div>
+      </div>
     </div>
   `;
         return v;
@@ -1811,7 +2350,7 @@
       <div class="hr"></div>
       <b class="small">Recommended Actions</b>
       <ul class="small">${actions.map((a) => `<li>${a}</li>`).join("")}</ul>
-      ${level === "HIGH" || level === "CRITICAL" ? `<button class="btn bad block" id="issueAlertBtn" type="button">🚨 Issue Early Warning Alert for ${zone.name}</button>` : `<p class="small muted">Risk is below the alert threshold — no warning issued.</p>`}
+      ${level === "HIGH" || level === "CRITICAL" ? `<button class="btn bad block" id="issueAlertBtn" type="button">🚨 Issue Early Warning Alert for ${zone.name}</button>` : `<p class="small muted">Risk is below the alert threshold — no warning issued, siren stays silent.</p>`}
     `;
           pushLog(
             `Risk analysis run for <b>${zone.name}</b> (${zone.hazard}): score ${score} → <b>${level}</b>`,
@@ -1826,6 +2365,7 @@
           }
           saveState();
           renderDashboard();
+          checkSirenAutoState();
         });
       }
       function issueAlert(zone, level, score, hazardId) {
@@ -1845,13 +2385,13 @@
         pushLog(
           `🚨 Alert <b>${id}</b> issued for <b>${zone.name}</b> — ${level}`,
         );
-        if (level === "CRITICAL") Siren.start();
         saveState();
         renderAlerts();
         renderDashboard();
+        checkSirenAutoState();
       }
 
-      /* ========================= MAP TAB ========================= */
+      /* ========================= MAP TAB (DURING) ========================= */
       function buildMapView() {
         const v = el(`<div class="view" id="view-map"></div>`);
         v.innerHTML = `
@@ -1873,12 +2413,188 @@
         return v;
       }
 
-      /* ========================= ALERTS ========================= */
+      /* ========================= LOCATION ROUTER (From → To, real distance) ========================= */
+      function buildRouterView() {
+        const v = el(`<div class="view" id="view-router"></div>`);
+        const optionsHtml = (val) => {
+          const byCountry = {};
+          LOCATIONS.forEach((l) => {
+            (byCountry[l.country] = byCountry[l.country] || []).push(l);
+          });
+          return Object.keys(byCountry)
+            .map(
+              (c) =>
+                `<optgroup label="${byCountry[c][0].flag} ${c}">${byCountry[c]
+                  .map(
+                    (l) =>
+                      `<option value="${l.id}" ${l.id === val ? "selected" : ""}>${l.name}</option>`,
+                  )
+                  .join("")}</optgroup>`,
+            )
+            .join("");
+        };
+        v.innerHTML = `
+    <h1 class="page-title">📍 Location Router — Exact From → To Distance</h1>
+    <p class="page-sub">Pick any two real locations across India, Pakistan and Japan (or use your own live GPS as the starting point). The router calculates the exact straight-line distance immediately, then fetches a real road route and driving distance/time, and draws both endpoints and the path on their own dedicated map — this map never overlaps with the other tabs' maps.</p>
+    <div class="card">
+      <div class="grid g-3">
+        <div>
+          <label>From</label>
+          <select id="routeFrom">${optionsHtml("IN-BLR")}</select>
+          <button class="btn sm outline" id="routeUseGps" type="button" style="margin-top:8px">📍 Use my live GPS as "From"</button>
+          <div class="small muted" id="routeGpsStatus" style="margin-top:4px"></div>
+        </div>
+        <div>
+          <label>To</label>
+          <select id="routeTo">${optionsHtml("IN-DEL")}</select>
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="btn block" id="routeGoBtn" type="button">▶ Calculate Route & Distance</button>
+        </div>
+      </div>
+      <div id="routeResult"></div>
+      <div id="map-router" class="leaflet-map" style="margin-top:14px"></div>
+    </div>
+  `;
+        return v;
+      }
+      let routeGpsOverride = null;
+      function renderRouter() {
+        // ensure a fresh, correctly-sized map exists for this tab specifically
+        getOrCreateMap("map-router", [24, 78], 4.2);
+      }
+      function bindRouter() {
+        document.getElementById("routeUseGps").addEventListener("click", () => {
+          const statusEl = document.getElementById("routeGpsStatus");
+          if (!navigator.geolocation) {
+            statusEl.textContent = "Geolocation not supported by this browser.";
+            return;
+          }
+          statusEl.textContent = "Requesting live location permission…";
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              routeGpsOverride = {
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+              };
+              statusEl.innerHTML = `✅ Using live GPS as "From": ${routeGpsOverride.lat.toFixed(5)}, ${routeGpsOverride.lng.toFixed(5)}`;
+            },
+            (err) => {
+              statusEl.textContent = "Could not get location: " + err.message;
+            },
+            { enableHighAccuracy: true, timeout: 10000 },
+          );
+        });
+        document
+          .getElementById("routeGoBtn")
+          .addEventListener("click", async () => {
+            const fromId = document.getElementById("routeFrom").value;
+            const toId = document.getElementById("routeTo").value;
+            const to = locById(toId);
+            const from = routeGpsOverride
+              ? {
+                  name: "Your live GPS location",
+                  lat: routeGpsOverride.lat,
+                  lng: routeGpsOverride.lng,
+                  flag: "📍",
+                }
+              : locById(fromId);
+            if (!from || !to) return;
+            const straight = haversineKm(from.lat, from.lng, to.lat, to.lng);
+            const host = document.getElementById("routeResult");
+            host.innerHTML = `
+      <div class="route-summary">
+        <div class="rs"><span>From</span><b>${from.flag || ""} ${from.name}</b></div>
+        <div class="rs"><span>To</span><b>${to.flag || ""} ${to.name}</b></div>
+        <div class="rs"><span>Straight-line distance</span><b>${straight.toFixed(1)} km</b></div>
+      </div>
+      <p class="small muted" id="routeRoadNote">Fetching real road route and driving distance/time…</p>
+    `;
+            const reg = getOrCreateMap("map-router", [24, 78], 4.2);
+            reg.layer.clearLayers();
+            L.marker([from.lat, from.lng], {
+              icon: divIcon("#16a34a", "🟢", false),
+            })
+              .addTo(reg.layer)
+              .bindPopup(`<b>From:</b> ${from.name}`);
+            L.marker([to.lat, to.lng], {
+              icon: divIcon("#dc2626", "🔴", false),
+            })
+              .addTo(reg.layer)
+              .bindPopup(`<b>To:</b> ${to.name}`);
+            const straightLine = L.polyline(
+              [
+                [from.lat, from.lng],
+                [to.lat, to.lng],
+              ],
+              { color: "#94a3b8", weight: 3, dashArray: "6 8" },
+            ).addTo(reg.layer);
+            reg.map.fitBounds(straightLine.getBounds(), { padding: [40, 40] });
+            setTimeout(() => reg.map.invalidateSize(), 50);
+
+            pushLog(
+              `📍 Route calculated: <b>${from.name}</b> → <b>${to.name}</b> (${straight.toFixed(1)} km straight-line)`,
+            );
+            saveState();
+
+            const roadData = await tryRealRouteFull(
+              from.lat,
+              from.lng,
+              to.lat,
+              to.lng,
+            );
+            const note = document.getElementById("routeRoadNote");
+            if (roadData && roadData.coords && roadData.coords.length) {
+              L.polyline(roadData.coords, {
+                color: "#1d4ed8",
+                weight: 4,
+              }).addTo(reg.layer);
+              reg.map.fitBounds(L.polyline(roadData.coords).getBounds(), {
+                padding: [40, 40],
+              });
+              const hrs = Math.floor(roadData.durationSec / 3600);
+              const mins = Math.round((roadData.durationSec % 3600) / 60);
+              document.querySelector(".route-summary").insertAdjacentHTML(
+                "beforeend",
+                `<div class="rs"><span>Real road distance</span><b>${(roadData.distanceMeters / 1000).toFixed(1)} km</b></div>
+               <div class="rs"><span>Estimated drive time</span><b>${hrs > 0 ? hrs + "h " : ""}${mins}m</b></div>`,
+              );
+              if (note)
+                note.textContent =
+                  "Real road route drawn on the map (solid blue line) alongside the straight-line distance (dashed grey).";
+            } else {
+              if (note)
+                note.textContent =
+                  "Live road-routing service unreachable from this browser right now — showing the straight-line (great-circle) distance only, which is still the exact geographic distance between the two points.";
+            }
+          });
+      }
+      // Fetches a real road route + duration from the public OSRM demo API (runs in the visitor's
+      // own browser, not this sandbox — works wherever the person opens the published page).
+      async function tryRealRouteFull(lat1, lng1, lat2, lng2) {
+        try {
+          const url = `https://router.project-osrm.org/route/v1/driving/${lng1},${lat1};${lng2},${lat2}?overview=full&geometries=geojson`;
+          const res = await fetch(url);
+          if (!res.ok) return null;
+          const data = await res.json();
+          const route = data && data.routes && data.routes[0];
+          if (!route || !route.geometry) return null;
+          return {
+            coords: route.geometry.coordinates.map((c) => [c[1], c[0]]),
+            distanceMeters: route.distance,
+            durationSec: route.duration,
+          };
+        } catch (e) {
+          return null;
+        }
+      }
+
+      /* ========================= ALERTS (DURING) ========================= */
       function buildAlertsView() {
         const v = el(`<div class="view" id="view-alerts"></div>`);
         v.innerHTML = `
-    <h1 class="page-title">🚨 Early Warning & Alerts</h1>
-    <p class="page-sub">Every alert here was generated by the Risk Engine (or issued manually below). HIGH/CRITICAL alerts trigger the siren automatically.</p>
+    <h1 class="page-title">🚨 Early Warning & Alerts <span class="chip">DURING</span></h1>
+    <p class="page-sub">Every alert here was generated by the Risk Engine (or issued manually below). The siren only sounds automatically for CRITICAL alerts and silences itself the moment no CRITICAL condition remains — it never plays on page load.</p>
     <div class="card" style="margin-bottom:14px">
       <h3>📣 Issue Manual Alert</h3>
       <div class="grid g-3">
@@ -1937,20 +2653,20 @@
             pushLog(
               `📣 Manual alert <b>${id}</b> sent for <b>${zone.name}</b>`,
             );
-            if (level === "CRITICAL") Siren.start();
             document.getElementById("manualAlertMsg").value = "";
             saveState();
             renderAlerts();
             renderDashboard();
+            checkSirenAutoState();
             toast("Alert sent to " + zone.name, "📣", level);
           });
       }
 
-      /* ========================= SOS (with live GPS, photo, age) ========================= */
+      /* ========================= SOS (with live GPS, photo, age) — DURING ========================= */
       function buildSosView() {
         const v = el(`<div class="view" id="view-sos"></div>`);
         v.innerHTML = `
-    <h1 class="page-title">🆘 Citizen Emergency SOS</h1>
+    <h1 class="page-title">🆘 Citizen Emergency SOS <span class="chip">DURING</span></h1>
     <p class="page-sub">Simulates the citizen mobile app. "Get My Live Location" uses your browser's real GPS (navigator.geolocation) — allow the permission prompt. If a case is marked as needing medical assistance and turns out CRITICAL, the platform automatically draws the route from your live location to the nearest hospital and sounds the siren.</p>
     <div class="two-col">
       <div class="card">
@@ -1966,7 +2682,7 @@
         <label>Number of people</label><input type="number" id="sosPeople" value="1" min="1">
         <label>Emergency type (select all that apply)</label>
         <div class="check-row" id="sosTypes">
-          ${["Trapped", "Medical", "Missing Person", "Food", "Water", "Structural Damage"].map((t) => `<div class="check-pill" data-t="${t}">${t}</div>`).join("")}
+          ${["Trapped", "Medical", "Missing Person", "Food", "Water", "Structural Damage", "Woman/Child at risk"].map((t) => `<div class="check-pill" data-t="${t}">${t}</div>`).join("")}
         </div>
         <label class="inline-flex" style="cursor:pointer"><input type="checkbox" id="sosMedical" style="width:auto"> &nbsp;Needs urgent medical assistance (track live location for ambulance routing)</label>
         <label>Photo of situation / injured person (optional)</label>
@@ -2069,13 +2785,15 @@
             types.includes("Trapped") ||
             types.includes("Medical") ||
             types.includes("Missing Person") ||
+            types.includes("Woman/Child at risk") ||
             medicalAssist
           )
             priority = "HIGH";
           const zone = zoneById(zoneId);
           if (
             (zone.riskLevel === "CRITICAL" && priority === "HIGH") ||
-            (medicalAssist && types.includes("Trapped"))
+            (medicalAssist && types.includes("Trapped")) ||
+            types.includes("Woman/Child at risk")
           )
             priority = "CRITICAL";
 
@@ -2143,7 +2861,6 @@
                 }
               });
             }
-            Siren.start();
           }
 
           STATE.sos.unshift(record);
@@ -2151,6 +2868,7 @@
             `🆘 New SOS <b>${id}</b> from <b>${name}</b> in <b>${zone.name}</b> — priority ${priority}${medicalAssist ? " · MEDICAL" : ""}`,
           );
           saveState();
+          checkSirenAutoState();
 
           document.getElementById("sosConfirm").innerHTML = `
       <div class="alert-item ${priority}">
@@ -2227,11 +2945,11 @@
           : '<p class="muted">No SOS sent yet.</p>';
       }
 
-      /* ========================= RESCUE COORDINATION ========================= */
+      /* ========================= RESCUE COORDINATION (DURING) ========================= */
       function buildRescueView() {
         const v = el(`<div class="view" id="view-rescue"></div>`);
         v.innerHTML = `
-    <h1 class="page-title">🚑 Rescue Command Center</h1>
+    <h1 class="page-title">🚑 Rescue Command Center <span class="chip">DURING</span></h1>
     <p class="page-sub">All open SOS requests, sorted by priority. Assign a team, then mark rescued — statuses update live everywhere (map, dashboard, recovery analytics).</p>
     <div class="card"><div class="table-wrap"><table id="rescueTable"><thead><tr>
       <th></th><th>SOS ID</th><th>Zone</th><th>Age</th><th>People</th><th>Type</th><th>Priority</th><th>Status</th><th>Assigned Unit</th><th>Action</th>
@@ -2313,15 +3031,12 @@
         pushLog(
           `🟢 SOS <b>${sos.id}</b> marked rescued — ${sos.people} people safe`,
         );
-        const stillCritical = STATE.sos.some(
-          (s) => s.status !== "rescued" && s.priority === "CRITICAL",
-        );
-        if (!stillCritical) Siren.stop();
         saveState();
         renderRescue();
         renderDashboard();
         renderRecovery();
         renderMap("map-main");
+        checkSirenAutoState();
         toast(sos.id + " marked rescued", "🟢");
       }
 
@@ -2330,7 +3045,7 @@
         const v = el(`<div class="view" id="view-shelters"></div>`);
         v.innerHTML = `
     <h1 class="page-title">🏠 Shelter Management</h1>
-    <p class="page-sub">Live capacity tracking. Update occupancy as people arrive, so the system always knows which shelters can still take evacuees.</p>
+    <p class="page-sub">Live capacity tracking. Update occupancy as people arrive, so the system always knows which shelters can still take evacuees. Shelters tagged 👩‍👧 have a dedicated women-and-children-friendly space.</p>
     <div class="grid g-3" id="shelterCards"></div>
   `;
         return v;
@@ -2358,7 +3073,7 @@
                   : "var(--good)";
             return `<div class="card">
       <h3>${s.name} <span class="tag" style="color:${color}">${status}</span></h3>
-      <div class="small muted">${zoneById(s.zoneId).name} ${s.medical ? "· 🏥 Medical support" : ""}</div>
+      <div class="small muted">${zoneById(s.zoneId).name} ${s.medical ? "· 🏥 Medical support" : ""} ${s.womenChild ? "· 👩‍👧 Women & child space" : ""}</div>
       <div style="margin:10px 0"><div class="progress"><div style="width:${pct}%;background:${color}"></div></div>
       <div class="small" style="margin-top:4px">${s.occupied} / ${s.capacity} occupied (${s.capacity - s.occupied} available)</div></div>
       <div class="inline-flex">
@@ -2370,11 +3085,238 @@
           .join("");
       }
 
-      /* ========================= RELIEF ========================= */
+      /* ========================= WOMEN & CHILD SAFETY ========================= */
+      function buildSafetyView() {
+        const v = el(`<div class="view" id="view-safety"></div>`);
+        const helplineRows = (country) =>
+          HELPLINES[country]
+            .map(
+              ([label, num]) =>
+                `<tr><td><a href="tel:${num.replace(/[^0-9+]/g, "")}">${num}</a></td><td class="small">${label}</td></tr>`,
+            )
+            .join("");
+        v.innerHTML = `
+    <h1 class="page-title">👩‍👧 Women & Child Safety</h1>
+    <p class="page-sub">A dedicated safety layer: one-tap panic alert with live location sharing, verified national helplines for India, Pakistan and Japan, and a live list of shelters with women-and-children-friendly spaces.</p>
+    <div class="two-col">
+      <div class="card">
+        <h3>🆘 One-Tap Panic Alert</h3>
+        <p class="small">Sends a CRITICAL priority SOS tagged "Woman/Child at risk" using your live GPS, sounds the siren, and puts it at the top of Rescue Coordination.</p>
+        <label>Name (optional)</label><input type="text" id="safetyName" placeholder="Your name">
+        <label>Zone / Approx. Location (used if GPS is unavailable)</label><select id="safetyZone"></select>
+        <button class="btn pink block" id="safetyPanicBtn" type="button" style="margin-top:10px">🆘 Send Panic Alert Now</button>
+        <div id="safetyConfirm" class="small" style="margin-top:10px"></div>
+        <div class="hr"></div>
+        <h3>📤 Share Live Location with a Trusted Contact</h3>
+        <label>Trusted contact name</label><input type="text" id="trustedName" placeholder="e.g. Mother, Neighbour">
+        <label>Trusted contact phone (with country code, digits only)</label><input type="tel" id="trustedPhone" placeholder="e.g. 919876543210">
+        <button class="btn outline block" id="shareLocBtn" type="button" style="margin-top:10px">📍 Get Live GPS & Open WhatsApp Share</button>
+        <div class="small muted" id="shareLocStatus" style="margin-top:6px"></div>
+      </div>
+      <div class="card">
+        <h3>📞 Verified National Helplines</h3>
+        <div class="table-wrap">
+          <b class="small"><span class="country-flag">🇮🇳</span>India</b>
+          <table class="helpline-table"><tbody>${helplineRows("India")}</tbody></table>
+        </div>
+        <div class="hr"></div>
+        <div class="table-wrap">
+          <b class="small"><span class="country-flag">🇵🇰</span>Pakistan</b>
+          <table class="helpline-table"><tbody>${helplineRows("Pakistan")}</tbody></table>
+        </div>
+        <div class="hr"></div>
+        <div class="table-wrap">
+          <b class="small"><span class="country-flag">🇯🇵</span>Japan</b>
+          <table class="helpline-table"><tbody>${helplineRows("Japan")}</tbody></table>
+        </div>
+      </div>
+    </div>
+    <div class="hr"></div>
+    <div class="card">
+      <h3>🏠 Women & Child-Friendly Shelters Right Now</h3>
+      <div id="safetyShelterList" class="table-wrap"></div>
+    </div>
+    <div class="hr"></div>
+    <div class="card">
+      <h3>🛡️ Safety Guidance</h3>
+      <div class="grid g-2">
+        <div>
+          <b class="small">During evacuation</b>
+          <ul class="small">
+            <li>Keep children in sight at all times; use a wrist-tether or ID card with a phone number for very young children</li>
+            <li>Travel in groups where possible, prefer well-lit and populated routes</li>
+            <li>Register with shelter staff immediately on arrival so you appear on the headcount</li>
+          </ul>
+        </div>
+        <div>
+          <b class="small">If you feel unsafe</b>
+          <ul class="small">
+            <li>Move toward shelter staff, a rescue unit, or the shelter's designated women & child space</li>
+            <li>Use the panic button above — it shares your exact GPS with rescue coordination</li>
+            <li>Call the national helpline for your country from the list on this page</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  `;
+        return v;
+      }
+      function renderSafety() {
+        const zoneSel = document.getElementById("safetyZone");
+        if (zoneSel && !zoneSel.options.length) {
+          zoneSel.innerHTML = STATE.zones
+            .map((z) => `<option value="${z.id}">${z.name}</option>`)
+            .join("");
+        }
+        const host = document.getElementById("safetyShelterList");
+        if (host) {
+          const wc = STATE.shelters.filter((s) => s.womenChild);
+          host.innerHTML = wc.length
+            ? `<table><thead><tr><th>Shelter</th><th>Zone</th><th>Free Space</th><th>Medical</th></tr></thead><tbody>${wc
+                .map(
+                  (s) =>
+                    `<tr><td><b>${s.name}</b></td><td>${zoneById(s.zoneId).name}</td><td>${s.capacity - s.occupied}</td><td>${s.medical ? "Yes" : "No"}</td></tr>`,
+                )
+                .join("")}</tbody></table>`
+            : `<p class="muted small">No shelters currently flagged — check Shelter Management tab.</p>`;
+        }
+        const nameEl = document.getElementById("trustedName");
+        const phoneEl = document.getElementById("trustedPhone");
+        if (nameEl && STATE.trustedContact)
+          nameEl.value = STATE.trustedContact.name || "";
+        if (phoneEl && STATE.trustedContact)
+          phoneEl.value = STATE.trustedContact.phone || "";
+      }
+      function bindSafety() {
+        document
+          .getElementById("safetyPanicBtn")
+          .addEventListener("click", () => {
+            const name =
+              document.getElementById("safetyName").value.trim() || "Anonymous";
+            const zoneId = document.getElementById("safetyZone").value;
+            const confirmHost = document.getElementById("safetyConfirm");
+            const finalizePanic = (gps) => {
+              STATE.sosCounter++;
+              const id = "SOS-" + STATE.sosCounter;
+              const zone = zoneById(zoneId);
+              const record = {
+                id,
+                name,
+                age: null,
+                phone: "",
+                zoneId,
+                people: 1,
+                types: ["Woman/Child at risk"],
+                message:
+                  "Panic button activated from Women & Child Safety panel.",
+                priority: "CRITICAL",
+                status: "waiting",
+                assignedTeam: null,
+                time: new Date().toLocaleString(),
+                medicalAssist: true,
+                gps: gps || null,
+                photo: null,
+                route: null,
+              };
+              if (gps) {
+                const dest = nearestFacility(gps.lat, gps.lng, STATE.hospitals);
+                if (dest) {
+                  record.route = {
+                    coords: [
+                      [gps.lat, gps.lng],
+                      [dest.lat, dest.lng],
+                    ],
+                    destName: dest.name,
+                    destLat: dest.lat,
+                    destLng: dest.lng,
+                    distanceKm: dest.distanceKm,
+                    real: false,
+                  };
+                }
+              }
+              STATE.sos.unshift(record);
+              pushLog(
+                `🆘 PANIC ALERT <b>${id}</b> from <b>${name}</b> — CRITICAL, Woman/Child at risk`,
+              );
+              saveState();
+              checkSirenAutoState();
+              confirmHost.innerHTML = `<div class="alert-item CRITICAL"><b>✅ Panic alert ${id} sent — CRITICAL priority.</b><br>Rescue Coordination has been notified${gps ? " with your live GPS location." : " using your selected zone (no GPS captured)."}</div>`;
+              renderRescue();
+              renderDashboard();
+              renderMap("map-main");
+              toast("Panic alert " + id + " sent", "🆘", "CRITICAL");
+            };
+            if (navigator.geolocation) {
+              confirmHost.innerHTML = `<p class="small muted">Capturing live location…</p>`;
+              navigator.geolocation.getCurrentPosition(
+                (pos) =>
+                  finalizePanic({
+                    lat: pos.coords.latitude,
+                    lng: pos.coords.longitude,
+                  }),
+                () => finalizePanic(null),
+                { enableHighAccuracy: true, timeout: 8000 },
+              );
+            } else {
+              finalizePanic(null);
+            }
+          });
+
+        document.getElementById("shareLocBtn").addEventListener("click", () => {
+          const statusEl = document.getElementById("shareLocStatus");
+          const name = document.getElementById("trustedName").value.trim();
+          const phone = document
+            .getElementById("trustedPhone")
+            .value.trim()
+            .replace(/[^0-9]/g, "");
+          STATE.trustedContact = { name, phone };
+          saveState();
+          if (!navigator.geolocation) {
+            statusEl.textContent = "Geolocation not supported by this browser.";
+            return;
+          }
+          statusEl.textContent = "Getting your live location…";
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              const lat = pos.coords.latitude.toFixed(5);
+              const lng = pos.coords.longitude.toFixed(5);
+              const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+              const text = encodeURIComponent(
+                `This is my live location during an emergency: ${mapsUrl}${name ? " — sent to " + name : ""}`,
+              );
+              const waUrl = phone
+                ? `https://wa.me/${phone}?text=${text}`
+                : `https://wa.me/?text=${text}`;
+              statusEl.innerHTML = `✅ Location captured (${lat}, ${lng}). Opening WhatsApp share…`;
+              window.open(waUrl, "_blank");
+              pushLog(
+                `📤 Live location shared with trusted contact${name ? " (" + name + ")" : ""}`,
+              );
+              saveState();
+            },
+            (err) => {
+              statusEl.textContent = "Could not get location: " + err.message;
+            },
+            { enableHighAccuracy: true, timeout: 10000 },
+          );
+        });
+      }
+
+      /* Global top-bar panic button — usable from any tab */
+      document.getElementById("panicBtnTop").addEventListener("click", () => {
+        showView("safety");
+        setTimeout(() => {
+          document
+            .getElementById("safetyPanicBtn")
+            .scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 120);
+      });
+
+      /* ========================= RELIEF (AFTER) ========================= */
       function buildReliefView() {
         const v = el(`<div class="view" id="view-relief"></div>`);
         v.innerHTML = `
-    <h1 class="page-title">📦 Relief & Resource Management</h1>
+    <h1 class="page-title">📦 Relief & Resource Management <span class="chip">AFTER</span></h1>
     <p class="page-sub">Central inventory. Allocate real quantities to a zone — stock actually decreases and a dispatch record is logged and charted in Recovery & Analytics.</p>
     <div class="two-col">
       <div class="card"><h3>🏬 Central Inventory</h3><div id="inventoryList"></div></div>
@@ -2482,6 +3424,7 @@
     <p class="page-sub">Pick an affected zone — the planner finds the nearest shelter with free capacity, computes real distance, and generates a plan.</p>
     <div class="card">
       <label>Affected Zone</label><select id="evacZone"></select>
+      <label class="inline-flex" style="cursor:pointer"><input type="checkbox" id="evacPrioritizeWC" style="width:auto"> &nbsp;Prioritise a women & child-friendly shelter</label>
       <button class="btn" style="margin-top:10px" id="evacBtn" type="button">🧭 Generate Evacuation Plan</button>
       <div id="evacResult" style="margin-top:16px"></div>
     </div>
@@ -2498,14 +3441,17 @@
       function bindEvac() {
         document.getElementById("evacBtn").addEventListener("click", () => {
           const zoneId = document.getElementById("evacZone").value;
+          const wcOnly = document.getElementById("evacPrioritizeWC").checked;
           const zone = zoneById(zoneId);
-          const candidates = STATE.shelters
+          let candidates = STATE.shelters
             .filter((s) => s.capacity - s.occupied > 0)
             .map((s) => ({
               ...s,
               dist: haversineKm(zone.lat, zone.lng, s.lat, s.lng),
             }))
             .sort((a, b) => a.dist - b.dist);
+          if (wcOnly && candidates.some((c) => c.womenChild))
+            candidates = candidates.filter((c) => c.womenChild);
           const best = candidates[0];
           const host = document.getElementById("evacResult");
           if (!best) {
@@ -2520,13 +3466,14 @@
         <div class="small">Distance: <b>${best.dist.toFixed(1)} km</b> (straight-line)</div>
         <div class="small">Shelter capacity available: <b>${best.capacity - best.occupied}</b> / ${best.capacity}</div>
         <div class="small">Medical support at shelter: <b>${best.medical ? "Yes" : "No"}</b></div>
+        <div class="small">Women & child-friendly space: <b>${best.womenChild ? "Yes" : "No"}</b></div>
         <div class="hr"></div>
         <b class="small">Route Instructions</b>
         <ol class="small">
           <li>Assemble at ${zone.name} designated pickup point.</li>
           <li>Move via main arterial road toward ${zoneById(best.zoneId).name}.</li>
           <li>Report to shelter registration desk at ${best.name}.</li>
-          <li>Priority boarding for elderly, children, and medical cases.</li>
+          <li>Priority boarding for elderly, children, pregnant women, and medical cases.</li>
         </ol>
       </div>`;
           pushLog(
@@ -2536,11 +3483,11 @@
         });
       }
 
-      /* ========================= RECOVERY / ANALYTICS ========================= */
+      /* ========================= RECOVERY / ANALYTICS (AFTER) ========================= */
       function buildRecoveryView() {
         const v = el(`<div class="view" id="view-recovery"></div>`);
         v.innerHTML = `
-    <h1 class="page-title">📊 Recovery & Post-Disaster Analytics</h1>
+    <h1 class="page-title">📊 Recovery & Post-Disaster Analytics <span class="chip">AFTER</span></h1>
     <p class="page-sub">All numbers below are computed live from actual rescue and relief actions taken in this session.</p>
     <div class="grid g-4" id="recoveryStats"></div>
     <div class="hr"></div>
@@ -2618,7 +3565,7 @@
         const v = el(`<div class="view" id="view-assistant"></div>`);
         v.innerHTML = `
     <h1 class="page-title">💬 Disaster Assistant</h1>
-    <p class="page-sub">A controlled knowledge-base assistant (not an open LLM) that answers from the platform's live data — try "nearest shelter", "active alerts", "flood safety tips".</p>
+    <p class="page-sub">A controlled knowledge-base assistant (not an open LLM) that answers from the platform's live data — try "nearest shelter", "active alerts", "flood safety tips", "women helpline", "distance Karachi to Lahore".</p>
     <div class="card">
       <div class="chatlog" id="chatLog"></div>
       <div class="inline-flex">
@@ -2629,7 +3576,8 @@
         <button class="pill" data-q="active alerts" type="button">Active alerts</button>
         <button class="pill" data-q="nearest shelter" type="button">Nearest shelter</button>
         <button class="pill" data-q="flood safety tips" type="button">Flood safety tips</button>
-        <button class="pill" data-q="earthquake safety" type="button">Earthquake safety</button>
+        <button class="pill" data-q="women helpline" type="button">Women helpline</button>
+        <button class="pill" data-q="child helpline" type="button">Child helpline</button>
       </div>
     </div>
   `;
@@ -2637,11 +3585,23 @@
       }
       function botReply(q) {
         const s = q.toLowerCase();
+        if (s.includes("women") && s.includes("helpline"))
+          return `Women's helplines: 🇮🇳 India 1091 / 181 · 🇵🇰 Pakistan Madadgaar 1043 · 🇯🇵 Japan Domestic Violence Hotline 0570-0-55210. Full list is in the Women & Child Safety tab.`;
+        if (s.includes("child") && s.includes("helpline"))
+          return `Child helplines: 🇮🇳 India 1098 · 🇵🇰 Pakistan Child Protection 1121 · 🇯🇵 Japan Child Consultation Centre 189. Full list is in the Women & Child Safety tab.`;
+        if (s.includes("panic"))
+          return 'Use the red "🆘 PANIC" button in the top bar, or open the "Women & Child Safety" tab, to send an instant CRITICAL SOS with your live GPS.';
+        if (
+          s.includes("distance") ||
+          s.includes("router") ||
+          s.includes("route")
+        )
+          return 'Open the "Location Router" tab, pick a From and To location anywhere in India, Pakistan or Japan (or use your live GPS), and it will show the exact straight-line distance plus a real road route and drive time.';
         if (s.includes("shelter")) {
           const best = [...STATE.shelters].sort(
             (a, b) => b.capacity - b.occupied - (a.capacity - a.occupied),
           )[0];
-          return `The shelter with the most free capacity right now is <b>${best.name}</b> in ${zoneById(best.zoneId).name}, with ${best.capacity - best.occupied} of ${best.capacity} spaces available${best.medical ? " and on-site medical support" : ""}.`;
+          return `The shelter with the most free capacity right now is <b>${best.name}</b> in ${zoneById(best.zoneId).name}, with ${best.capacity - best.occupied} of ${best.capacity} spaces available${best.medical ? " and on-site medical support" : ""}${best.womenChild ? ", including a women & child-friendly space" : ""}.`;
         }
         if (s.includes("alert")) {
           const active = STATE.alerts.filter(
@@ -2675,7 +3635,9 @@
           ).length;
           return `Currently ${avail} of ${STATE.teams.length} rescue units are available for dispatch.`;
         }
-        return "I can help with: active alerts, nearest shelter with space, sending an SOS, or safety tips for flood, landslide, cyclone, heatwave, forest fire and earthquake. Try asking one of those.";
+        if (s.includes("siren"))
+          return "The siren is silent by default. It only activates automatically for a CRITICAL risk zone, a CRITICAL alert, a CRITICAL SOS case, or the panic button — and switches itself off the moment none of those remain.";
+        return "I can help with: active alerts, nearest shelter with space, sending an SOS, the panic button, distance between two cities (Location Router), or safety tips for flood, landslide, cyclone, heatwave, forest fire and earthquake. Try asking one of those.";
       }
       function bindAssistant() {
         const log = document.getElementById("chatLog");
@@ -2687,7 +3649,7 @@
           log.scrollTop = log.scrollHeight;
         }
         addMsg(
-          "Hi, I'm the RakshaNet-X Disaster Assistant. Ask me about shelters, alerts, or safety tips.",
+          "Hi, I'm the RakshaNet-X Disaster Assistant. Ask me about shelters, alerts, the panic button, city-to-city distances, or safety tips.",
           "bot",
         );
         function send(q) {
@@ -2740,6 +3702,7 @@
           saveState();
           renderShelters();
           renderDashboard();
+          renderSafety();
           return;
         }
       });
@@ -2783,6 +3746,11 @@
           console.error("shelters", e);
         }
         try {
+          renderSafety();
+        } catch (e) {
+          console.error("safety", e);
+        }
+        try {
           renderRelief();
         } catch (e) {
           console.error("relief", e);
@@ -2799,6 +3767,7 @@
         }
       }
 
+      loadState();
       buildTabs();
       buildViews();
       bindRiskEngine();
@@ -2806,9 +3775,14 @@
       bindSos();
       bindRelief();
       bindEvac();
+      bindSafety();
+      bindRouter();
       bindAssistant();
       renderAll();
       showView("dashboard");
+      // Siren must reflect real state on load, not just be silent by default —
+      // if a previous session was saved mid-disaster, restore the alarm; otherwise stay quiet.
+      checkSirenAutoState();
     </script>
   </body>
 </html>
